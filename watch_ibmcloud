@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -o nounset
+
+WATCH_OUTPUT=$(mktemp)
+
+trap cleanup INT TERM ERR EXIT
+
+cleanup() {
+    rm -f "${WATCH_OUTPUT}"
+    exit
+}
+
+while true; do
+    echo "Generating output..."
+    make login_ibmcloud >/dev/null 2>&1
+    (
+        date
+        echo "========== LOCATIONS =========="
+        ibmcloud sat location ls 2>&1 | grep -v Retrieving | grep -v OK
+        echo ""
+        echo "========== LOCATION =========="
+        ibmcloud sat location get --location "${RESOURCE_PREFIX}-location" 2>&1 | grep Message
+        echo ""
+        echo "========== SATELLITE HOSTS =========="
+        ibmcloud sat host ls --location "${RESOURCE_PREFIX}-location" 2>&1 | grep -v Retrieving | grep -v OK
+        echo ""
+        echo "========== OPENSHIFT CLUSTER =========="
+        ibmcloud oc cluster ls --provider satellite 2>&1 | grep -v OK
+        echo ""
+        echo "========== DNS SUBDOMAINS =========="
+        ibmcloud sat location dns ls --location "${RESOURCE_PREFIX}-location" 2>&1
+        echo ""
+        echo "========== NLB INFO =========="
+        ibmcloud ks nlb-dns ls --cluster "${RESOURCE_PREFIX}-cluster" 2>&1
+        echo ""
+    ) >"${WATCH_OUTPUT}"
+    clear
+    cut -c -"$(tput cols)" "${WATCH_OUTPUT}" | cat
+    sleep 10
+done
