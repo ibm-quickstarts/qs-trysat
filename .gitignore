@@ -2,3 +2,6 @@
 .DS_Store
 ssh-key.*
 ssh-keys/
+*.md.html
+.ibmcloud-home
+wireguard*.conf

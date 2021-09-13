@@ -219,5 +219,3 @@ all_public () {
 	all_public_cluster
 	echo "Done!"
 }
-
-all_private
