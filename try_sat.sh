@@ -1,4 +1,5 @@
 DEBUG=true
+export BASE_DIR=$(pwd)
 
 if [ -n "$DEBUG" ]; then
 	set -x
@@ -24,11 +25,11 @@ watch () {
 }
 
 terraform_init () {
-	cd terraform
+	cd $BASE_DIR/terraform
 	terraform init -upgrade
-}
+}	
 
-clean() {
+clean () {
 	terraform_init 
 	ssh-keys/ssh-key 
 	login_ibmcloud
@@ -40,14 +41,15 @@ clean() {
 		echo 'Waiting for cluster to be deleted...'; 
 		sleep 30; 
 	done
-	-cd terraform && terraform destroy -auto-approve && rm -fv terraform.tfstate*
-	rm -fv ssh-keys/ssh-key
-	rm -fv ssh-keys/ssh-key.pub
+	cd $BASE_DIR/terraform
+	terraform destroy -auto-approve && rm -fv terraform.tfstate*
+	rm -fv $BASE_DIR/terraform/ssh-keys/ssh-key
+	rm -fv $BASE_DIR/terraform/ssh-keys/ssh-key.pub
 }
 
 ssh-keys/ssh-key () {
-	mkdir -p ssh-keys/
-	ssh-keygen -f ssh-keys/ssh-key -N ''
+	mkdir -p $BASE_DIR/ssh-keys/
+	ssh-keygen -f $BASE_DIR/ssh-keys/ssh-key -N ''
 }
 
 login_ibmcloud () {
@@ -61,14 +63,14 @@ login_ibmcloud_silent () {
 target () {
 	terraform_init 
 	login_ibmcloud
-	cd terraform && terraform apply -target=ibm_resource_group.group -auto-approve
+	cd $BASE_DIR/terraform && terraform apply -target=ibm_resource_group.group -auto-approve
 	ibmcloud target -g "$RESOURCE_PREFIX-group" -r "$LOCATION_REGION"
 }
 
 apply_terraform () {
 	terraform_init 
 	ssh-keys/ssh-key
-	cd terraform && terraform apply -auto-approve
+	terraform apply -auto-approve
 }
 
 attach_host_ready () {
@@ -77,7 +79,12 @@ attach_host_ready () {
 
 setup_dns_controlplane () {
 	# For more information, see http://ibm.biz/satloc-ts-subdomain
-	scripts/dns-register "$RESOURCE_PREFIX-location" $(cd terraform && terraform output -raw ipaddress_controlplane01_floating) $(cd terraform && terraform output -raw ipaddress_controlplane02_floating) $(cd terraform && terraform output -raw ipaddress_controlplane03_floating)
+	
+	scripts/dns-register "$RESOURCE_PREFIX-location" $(cd $BASE_DIR/terraform && terraform output -raw ipaddress_controlplane01_floating) $(cd $BASE_DIR/terraform && terraform output -raw ipaddress_controlplane02_floating) $(cd $BASE_DIR/terraform && terraform output -raw ipaddress_controlplane03_floating)
+}
+
+remove_and_reassign_host () {
+	echo "removing and reassigning $1"
 }
 
 assign_controlplane () {
@@ -92,9 +99,11 @@ assign_controlplane_ready () {
 
 create_cluster () {
 	target
-	export DEFAULT_MAJOR_VERSION=$(ibmcloud ks versions --json | jq '.openshift[] | select(.default == true) | .major' 2> /dev/null)
-	export DEFAULT_MINOR_VERSION=$(ibmcloud ks versions --json | jq '.openshift[] | select(.default == true) | .minor' 2> /dev/null)
-	until ibmcloud oc cluster create satellite --location "$RESOURCE_PREFIX-location" --name "$RESOURCE_PREFIX-cluster" --version $(DEFAULT_MAJOR_VERSION).$(DEFAULT_MINOR_VERSION)_openshift --enable-config-admin; do echo 'Waiting to create cluster...'; sleep 30; login_ibmcloud_silent; done
+	DEFAULT_KS_VERSION=$(ibmcloud ks versions --json | jq '.openshift[] | select(.default == true)')
+	export DEFAULT_MAJOR_VERSION=$(echo $DEFAULT_KS_VERSION | jq '.major' 2> /dev/null)
+	export DEFAULT_MINOR_VERSION=$(echo $DEFAULT_KS_VERSION | jq '.minor' 2> /dev/null)
+	export DEFAULT_PATCH_VERSION=$(echo $DEFAULT_KS_VERSION | jq '.patch' 2> /dev/null)
+	until ibmcloud oc cluster create satellite -q --location "$RESOURCE_PREFIX-location" --name "$RESOURCE_PREFIX-cluster" --version $DEFAULT_MAJOR_VERSION.$DEFAULT_MINOR_VERSION.$(echo $DEFAULT_PATCH_VERSION)_openshift --enable-config-admin; do echo 'Waiting to create cluster...'; sleep 30; login_ibmcloud_silent; done
 }
 
 cluster_in_warning () {
@@ -114,12 +123,12 @@ assign_workernodes () {
 
 login_cluster () {
 	get_cluster_config
-	oc login -u apikey -p $(IC_API_KEY)
+	oc login -u apikey -p IC_API_KEY
 }
 
 setup_network_cluster () {
 	scripts/nlb-dns-remove "$RESOURCE_PREFIX-cluster"
-	scripts/nlb-dns-add "$RESOURCE_PREFIX-cluster" $(cd terraform && terraform output -raw ipaddress_workernode01_floating) $(cd terraform && terraform output -raw ipaddress_workernode02_floating) $(cd terraform && terraform output -raw ipaddress_workernode03_floating)
+	scripts/nlb-dns-add "$RESOURCE_PREFIX-cluster" $(cd $BASE_DIR/terraform && terraform output -raw ipaddress_workernode01_floating) $(cd $BASE_DIR/terraform && terraform output -raw ipaddress_workernode02_floating) $(cd $BASE_DIR/terraform && terraform output -raw ipaddress_workernode03_floating)
 }
 
 get_cluster_config () {
@@ -132,14 +141,14 @@ configure_cluster_logdna () {
 	oc adm new-project --node-selector='' ibm-observe
 	oc create serviceaccount logdna-agent -n ibm-observe
 	oc adm policy add-scc-to-user privileged system:serviceaccount:ibm-observe:logdna-agent
-	oc create secret generic logdna-agent-key --from-literal=logdna-agent-key=$(cd terraform && terraform output -raw logdna_ingestion_key) -n ibm-observe
+	oc create secret generic logdna-agent-key --from-literal=logdna-agent-key=$(cd $BASE_DIR/terraform && terraform output -raw logdna_ingestion_key) -n ibm-observe
 	oc create -f https://assets.us-east.logging.cloud.ibm.com/clients/logdna-agent-ds-os.yaml -n ibm-observe
 }
 
 wireguard-conf () {
 	ssh-keys/ssh-key
 	# There is no point in having strict host key checking, as floating IPs may get reused and we'll only connect to this server once.
-	scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ssh-keys/ssh-key root@$(cd terraform && terraform output -raw ipaddress_wireguard_floating):wireguard.client wireguard-$RESOURCE_PREFIX.conf
+	scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ssh-keys/ssh-key root@$(cd $BASE_DIR/terraform && terraform output -raw ipaddress_wireguard_floating):wireguard.client wireguard-$RESOURCE_PREFIX.conf
 }
 
 get_wireguard_config () {
@@ -158,7 +167,7 @@ deploy_sample_app () {
 create_sat_link_endpoint () {
 	login_ibmcloud
 	export SAT_ID=$(ibmcloud sat location get --location "$RESOURCE_PREFIX-location" | grep ID | sed -E 's/ID:\s*//')
-	ibmcloud sat endpoint create --dest-hostname $(cd terraform && terraform output -raw ipaddress_onprem_private) --dest-port 80 --dest-type location --location "$SAT_ID" --name Hello-On-Prem-HTTP --source-protocol HTTP
+	ibmcloud sat endpoint create --dest-hostname $(cd $BASE_DIR/terraform && terraform output -raw ipaddress_onprem_private) --dest-port 80 --dest-type location --location "$SAT_ID" --name Hello-On-Prem-HTTP --source-protocol HTTP
 	until ibmcloud sat endpoint ls --location "$SAT_ID" | grep Hello-On-Prem-HTTP ; do echo 'Waiting to satellite link endpoint...'; sleep 30; done
 	print_sat_link_hostname
 }
