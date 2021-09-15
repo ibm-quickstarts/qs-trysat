@@ -20,10 +20,22 @@ install:
 	ibmcloud plugin install container-service
 	ibmcloud plugin install observe-service
 	ibmcloud plugin install vpc-infrastructure
+	make plugin_update
+
+plugin_update:
 	ibmcloud plugin update container-registry
 	ibmcloud plugin update container-service
 	ibmcloud plugin update observe-service
 	ibmcloud plugin update vpc-infrastructure
+
+install_oc_cli:
+	# Install OpenShift CLI
+	wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.6.42/openshift-client-linux-4.6.42.tar.gz
+	tar -xvf openshift-client-linux-4.6.42.tar.gz
+	mv oc /usr/local/bin/oc
+	oc version
+
+
 
 watch:
 	./watch_ibmcloud
@@ -175,3 +187,7 @@ all_public:
 	make all_public_location
 	make all_public_cluster
 	@echo "Done!"
+
+setup_terraform_env:
+	# install ibmcloud tool
+	# make install

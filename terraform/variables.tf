@@ -29,3 +29,24 @@ variable "CREATE_FLOATING_IP" {
   type = number
   default = 0
 }
+
+variable "TF_VAR_RESOURCE_PREFIX" {
+  type = string
+  default = "try-sat"
+}
+
+variable "IC_API_KEY" {
+  type = string
+}
+
+variable "COS_REGION" {
+  type = string
+}
+
+variable "LOCATION_REGION" {
+  type = string
+}
+
+variable "IAAS_REGION" {
+  type = string
+}
