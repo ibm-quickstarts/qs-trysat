@@ -3,6 +3,7 @@
 
 variable "RESOURCE_PREFIX" {
   type = string
+  default = "try-sat"
 }
 
 variable "LOCATION_REGION" {
@@ -30,23 +31,7 @@ variable "CREATE_FLOATING_IP" {
   default = 0
 }
 
-variable "TF_VAR_RESOURCE_PREFIX" {
-  type = string
-  default = "try-sat"
-}
-
 variable "IC_API_KEY" {
   type = string
 }
 
-variable "COS_REGION" {
-  type = string
-}
-
-variable "LOCATION_REGION" {
-  type = string
-}
-
-variable "IAAS_REGION" {
-  type = string
-}
