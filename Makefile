@@ -155,6 +155,9 @@ all_private:
 
 all_public_location: login_ibmcloud
 	TF_VAR_CREATE_FLOATING_IP=1 make apply_terraform
+	make setup_public_hosts
+
+setup_public_hosts: login_ibmcloud
 	make attach_host_ready
 	make assign_controlplane
 	make assign_controlplane_ready
