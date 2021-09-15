@@ -61,6 +61,12 @@ data "ibm_satellite_attach_host_script" "script" {
   ]
 }
 
+resource "null_resource" "make_ssh_key" {
+  provisioner "local-exec" {
+    command = "ssh-keys/ssh-key"
+  }
+}
+
 data "local_file" "ssh_public_key" {
   filename = "../ssh-keys/ssh-key.pub"
 }
