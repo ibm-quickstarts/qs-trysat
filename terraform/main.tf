@@ -63,7 +63,7 @@ data "ibm_satellite_attach_host_script" "script" {
 
 resource "null_resource" "make_ssh_key" {
   provisioner "local-exec" {
-    command = "ssh-keys/ssh-key"
+    command = "make ssh-keys/ssh-key"
   }
 }
 
