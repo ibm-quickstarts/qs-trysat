@@ -63,7 +63,7 @@ data "ibm_satellite_attach_host_script" "script" {
 
 resource "null_resource" "make_ssh_key" {
   provisioner "local-exec" {
-    command = "sudo apt-get install make && pwd && cd .. && make ssh-keys/ssh-key && cd -"
+    command = "apt-get install make && pwd && cd .. && make ssh-keys/ssh-key && cd -"
   }
 }
 
