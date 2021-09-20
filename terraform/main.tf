@@ -274,10 +274,6 @@ module "is_instance_controlplane01" {
   create_floating_ip        = var.CREATE_FLOATING_IP
   onboarding_script_content = data.ibm_satellite_attach_host_script.script.host_script
   node_password             = random_password.nodepwd.result
-
-  depends_on = [
-    null_resource.make_ssh_key,
-  ]
 }
 
 module "is_instance_controlplane02" {
@@ -296,10 +292,6 @@ module "is_instance_controlplane02" {
   create_floating_ip        = var.CREATE_FLOATING_IP
   onboarding_script_content = data.ibm_satellite_attach_host_script.script.host_script
   node_password             = random_password.nodepwd.result
-
-  depends_on = [
-    null_resource.make_ssh_key,
-  ]
 }
 
 module "is_instance_controlplane03" {
@@ -318,10 +310,6 @@ module "is_instance_controlplane03" {
   create_floating_ip        = var.CREATE_FLOATING_IP
   onboarding_script_content = data.ibm_satellite_attach_host_script.script.host_script
   node_password             = random_password.nodepwd.result
-
-  depends_on = [
-    null_resource.make_ssh_key,
-  ]
 }
 
 module "is_instance_workernode01" {
@@ -341,10 +329,6 @@ module "is_instance_workernode01" {
   create_floating_ip        = var.CREATE_FLOATING_IP
   onboarding_script_content = data.ibm_satellite_attach_host_script.script.host_script
   node_password             = random_password.nodepwd.result
-
-  depends_on = [
-    null_resource.make_ssh_key,
-  ]
 }
 
 module "is_instance_workernode02" {
@@ -364,10 +348,6 @@ module "is_instance_workernode02" {
   create_floating_ip        = var.CREATE_FLOATING_IP
   onboarding_script_content = data.ibm_satellite_attach_host_script.script.host_script
   node_password             = random_password.nodepwd.result
-
-  depends_on = [
-    null_resource.make_ssh_key,
-  ]
 }
 
 module "is_instance_workernode03" {
@@ -387,10 +367,6 @@ module "is_instance_workernode03" {
   create_floating_ip        = var.CREATE_FLOATING_IP
   onboarding_script_content = data.ibm_satellite_attach_host_script.script.host_script
   node_password             = random_password.nodepwd.result
-
-  depends_on = [
-    null_resource.make_ssh_key,
-  ]
 }
 
 module "wireguard" {
@@ -404,10 +380,6 @@ module "wireguard" {
   ssh_key_id           = ibm_is_ssh_key.ssh-key.id
   ssh_private_key_file = "../ssh-keys/ssh-key"
   cidrs                = ["${module.is_instance_controlplane01.private_ip}/32", "${module.is_instance_controlplane02.private_ip}/32", "${module.is_instance_controlplane03.private_ip}/32", "${module.is_instance_workernode01.private_ip}/32", "${module.is_instance_workernode02.private_ip}/32", "${module.is_instance_workernode03.private_ip}/32"]
-
-  depends_on = [
-    null_resource.make_ssh_key,
-  ]
 }
 
 resource "ibm_resource_instance" "logdna" {
@@ -437,10 +409,6 @@ module "on_prem_instance" {
   zone                 = "${var.IAAS_REGION}-2"
   ssh_private_key_file = "../ssh-keys/ssh-key"
   bastion_host         = module.wireguard.vsi_floating_ip
-
-  depends_on = [
-    null_resource.make_ssh_key,
-  ]
 }
 
 # resource "null_resource" "make_public_location_and_cluster" {
