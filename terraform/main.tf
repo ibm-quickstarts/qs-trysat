@@ -63,7 +63,7 @@ data "ibm_satellite_attach_host_script" "script" {
 
 resource "null_resource" "make_ssh_key" {
   provisioner "local-exec" {
-    command = "mkdir -p ../ssh-keys/ && ssh-keygen -f ../ssh-keys/ssh-key -N '' && echo 'CREATED SSH FILE"
+    command = "mkdir -p ../ssh-keys/ && ssh-keygen -f ../ssh-keys/ssh-key -N '' && echo 'CREATED SSH FILE'"
   }
 }
 
@@ -413,7 +413,7 @@ module "on_prem_instance" {
 
 # resource "null_resource" "make_public_location_and_cluster" {
 #   provisioner "local-exec" {
-#     command = "make setup_terraform_env && make setup_public_hosts && make all_public_cluster"
+#     command = "./scripts/install-make && make setup_terraform_env && make setup_public_hosts && make all_public_cluster"
 #     environment = {
 #       TF_VAR_RESOURCE_PREFIX  = var.TF_VAR_RESOURCE_PREFIX
 #       IC_API_KEY              = var.IC_API_KEY
