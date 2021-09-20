@@ -63,12 +63,12 @@ data "ibm_satellite_attach_host_script" "script" {
 
 resource "null_resource" "make_ssh_key" {
   provisioner "local-exec" {
-    command = "mkdir -p ssh-keys/ && ssh-keygen -f ssh-keys/ssh-key -N ''"
+    command = "mkdir -p ../ssh-keys/ && ssh-keygen -f ../ssh-keys/ssh-key -N ''"
   }
 }
 
 data "local_file" "ssh_public_key" {
-  filename = "ssh-keys/ssh-key.pub"
+  filename = "../ssh-keys/ssh-key.pub"
   depends_on = [
     null_resource.make_ssh_key,
   ]
