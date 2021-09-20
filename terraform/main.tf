@@ -62,9 +62,7 @@ data "ibm_satellite_attach_host_script" "script" {
 }
 
 resource "null_resource" "make_ssh_key" {
-  triggers = {
-    build_number = "${timestamp()}"
-  }
+  triggers = {}
   provisioner "local-exec" {
     command = "mkdir -p ../ssh-keys/ && ssh-keygen -f ../ssh-keys/ssh-key -N '' && echo 'CREATED SSH FILE'"
   }
