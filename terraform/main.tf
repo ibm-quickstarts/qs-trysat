@@ -67,6 +67,7 @@ resource "null_resource" "make_ssh_key" {
   }
 }
 
+
 data "local_file" "ssh_public_key" {
   filename = "../ssh-keys/ssh-key.pub"
   depends_on = [
