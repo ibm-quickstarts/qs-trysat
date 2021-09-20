@@ -62,7 +62,7 @@ data "ibm_satellite_attach_host_script" "script" {
 }
 
 resource "null_resource" "make_ssh_key" {
-  triggers {
+  triggers = {
     build_number = "${timestamp()}"
   }
   provisioner "local-exec" {
