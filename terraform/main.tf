@@ -433,3 +433,37 @@ resource "null_resource" "setup_public_hosts" {
   ]
 }
 
+# resource "ibm_satellite_cluster" "create_cluster" {
+#     name                   = "%s"  
+#     location               = var.location
+#     enable_config_admin    = true
+#     kube_version           = "4.6_openshift"
+#     resource_group_id      = data.ibm_resource_group.rg.id
+#     wait_for_worker_update = true
+#     dynamic "zones" {
+#         for_each = var.zones
+#         content {
+#             id  = zones.value
+#         }
+#     }
+#   depends_on = [
+#     null_resource.setup_public_hosts
+#   ]
+# }
+
+# resource "null_resource" "setup_cluster" {
+#   provisioner "local-exec" {
+#     command = "./make setup_public_cluster"
+#     environment = {
+#       TF_VAR_RESOURCE_PREFIX  = var.RESOURCE_PREFIX
+#       IC_API_KEY              = var.IC_API_KEY
+#       COS_REGION              = var.COS_REGION
+#       LOCATION_REGION         = var.LOCATION_REGION
+#       IAAS_REGION             = var.IAAS_REGION
+#     }
+#   }
+#   depends_on = [
+#     ibm_satellite_cluster.create_cluster
+#   ]
+# }
+
