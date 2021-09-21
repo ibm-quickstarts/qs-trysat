@@ -189,5 +189,4 @@ all_public:
 	@echo "Done!"
 
 setup_terraform_env:
-	# install ibmcloud tool
 	# make install
