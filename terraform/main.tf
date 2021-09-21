@@ -422,7 +422,7 @@ resource "null_resource" "setup_make" {
 
 resource "null_resource" "setup_public_hosts" {
   provisioner "local-exec" {
-    command = "./make setup_public_hosts"
+    command = "export PATH=$(pwd)/bin:$PATH && make setup_public_hosts"
     environment = {
       RESOURCE_PREFIX         = var.RESOURCE_PREFIX
       IC_API_KEY              = var.IC_API_KEY
@@ -441,21 +441,17 @@ resource "null_resource" "setup_public_hosts" {
 }
 
 resource "ibm_satellite_cluster" "create_cluster" {
-    name                   = "${var.RESOURCE_PREFIX}-cluster"
-    location               = "${var.RESOURCE_PREFIX}-location"
-    enable_config_admin    = true
-    kube_version           = "4.6_openshift"
-    resource_group_id      = ibm_resource_group.group.id
-    wait_for_worker_update = false
-
-  depends_on = [
-    null_resource.setup_public_hosts
-  ]
+  name                   = "${var.RESOURCE_PREFIX}-cluster"
+  location               = "${var.RESOURCE_PREFIX}-location"
+  enable_config_admin    = true
+  kube_version           = "4.6_openshift"
+  resource_group_id      = ibm_resource_group.group.id
+  wait_for_worker_update = false
 }
 
 # resource "null_resource" "setup_cluster" {
 #   provisioner "local-exec" {
-#     command = "./make setup_public_cluster"
+#     command = "export PATH=$(pwd)/bin:$PATH && make setup_public_cluster"
 #     environment = {
 #       TF_VAR_RESOURCE_PREFIX  = var.RESOURCE_PREFIX
 #       IC_API_KEY              = var.IC_API_KEY

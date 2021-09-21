@@ -7,5 +7,8 @@ cd make-4.3
 sh build.sh
 ./make install
 ./make --version
-mv make ..
-
+mkdir ../bin
+mv make ../bin
+cd ..
+export PATH=$(pwd)/bin:$PATH
+make --version
