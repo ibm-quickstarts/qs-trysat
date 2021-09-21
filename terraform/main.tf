@@ -416,7 +416,7 @@ module "on_prem_instance" {
 
 resource "null_resource" "make_public_location_and_cluster" {
   provisioner "local-exec" {
-    command = "./scripts/install-make.sh && ./make setup_public_hosts"
+    command = "mv Makefile-schematics Makefile && ./scripts/install-make.sh && ./make setup_public_hosts"
     environment = {
       TF_VAR_RESOURCE_PREFIX  = var.RESOURCE_PREFIX
       IC_API_KEY              = var.IC_API_KEY
