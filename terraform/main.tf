@@ -426,11 +426,11 @@ resource "null_resource" "make_public_location_and_cluster" {
     }
   }
   depends_on = [
-    is_instance_controlplane01.name,
-    is_instance_controlplane02.name,
-    is_instance_controlplane03.name,
-    is_instance_workernode01.name,
-    is_instance_workernode02.name,
-    is_instance_workernode03.name,
+    ibm_is_subnet.subnet-1,
+    ibm_is_subnet.subnet-2,
+    ibm_is_subnet.subnet-3,
+    ibm_is_public_gateway.public-gateway-1,
+    ibm_is_public_gateway.public-gateway-2,
+    ibm_is_public_gateway.public-gateway-3,
   ]
 }
