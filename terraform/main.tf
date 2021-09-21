@@ -426,11 +426,11 @@ resource "null_resource" "make_public_location_and_cluster" {
     }
   }
   depends_on = [
-    "is_instance_controlplane01",
-    "is_instance_controlplane02",
-    "is_instance_controlplane03",
-    "is_instance_workernode01",
-    "is_instance_workernode02",
-    "is_instance_workernode03",
+    is_instance_controlplane01.name,
+    is_instance_controlplane02.name,
+    is_instance_controlplane03.name,
+    is_instance_workernode01.name,
+    is_instance_workernode02.name,
+    is_instance_workernode03.name,
   ]
 }
