@@ -425,4 +425,12 @@ resource "null_resource" "make_public_location_and_cluster" {
       IAAS_REGION             = var.IAAS_REGION
     }
   }
+  depends_on = [
+    "is_instance_controlplane01",
+    "is_instance_controlplane02",
+    "is_instance_controlplane03",
+    "is_instance_workernode01",
+    "is_instance_workernode02",
+    "is_instance_workernode03",
+  ]
 }
