@@ -428,7 +428,8 @@ resource "null_resource" "setup_public_hosts" {
   depends_on = [
     ibm_is_subnet.subnet-1,
     ibm_is_subnet.subnet-2,
-    ibm_is_subnet.subnet-3
+    ibm_is_subnet.subnet-3,
+    ibm_satellite_location.location
   ]
 }
 
