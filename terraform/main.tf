@@ -418,7 +418,7 @@ resource "null_resource" "make_public_location_and_cluster" {
   provisioner "local-exec" {
     command = "./scripts/install-make && make setup_public_hosts"
     environment = {
-      TF_VAR_RESOURCE_PREFIX  = var.TF_VAR_RESOURCE_PREFIX
+      TF_VAR_RESOURCE_PREFIX  = var.RESOURCE_PREFIX
       IC_API_KEY              = var.IC_API_KEY
       COS_REGION              = var.COS_REGION
       LOCATION_REGION         = var.LOCATION_REGION
