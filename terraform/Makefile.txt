@@ -78,7 +78,7 @@ attach_host_ready:
 
 setup_dns_controlplane:
 	# For more information, see http://ibm.biz/satloc-ts-subdomain
-	scripts/dns-register $(RESOURCE_PREFIX)-location $(shell cd terraform && terraform output -raw ipaddress_controlplane01_floating) $(shell cd terraform && terraform output -raw ipaddress_controlplane02_floating) $(shell cd terraform && terraform output -raw ipaddress_controlplane03_floating)
+	scripts/dns-register.sh $(RESOURCE_PREFIX)-location $(shell cd terraform && terraform output -raw ipaddress_controlplane01_floating) $(shell cd terraform && terraform output -raw ipaddress_controlplane02_floating) $(shell cd terraform && terraform output -raw ipaddress_controlplane03_floating)
 
 assign_controlplane:
 	until ibmcloud sat host assign --location $(RESOURCE_PREFIX)-location --zone=location-zone-1 --host=$(RESOURCE_PREFIX)-controlplane01; do echo 'Waiting to assign host to control plane'; sleep 30; done
@@ -109,8 +109,8 @@ login_cluster: get_cluster_config
 	oc login -u apikey -p $(IC_API_KEY)
 
 setup_network_cluster:
-	scripts/nlb-dns-remove $(RESOURCE_PREFIX)-cluster
-	scripts/nlb-dns-add $(RESOURCE_PREFIX)-cluster $(shell cd terraform && terraform output -raw ipaddress_workernode01_floating) $(shell cd terraform && terraform output -raw ipaddress_workernode02_floating) $(shell cd terraform && terraform output -raw ipaddress_workernode03_floating)
+	scripts/nlb-dns-remove.sh $(RESOURCE_PREFIX)-cluster
+	scripts/nlb-dns-add.sh $(RESOURCE_PREFIX)-cluster $(shell cd terraform && terraform output -raw ipaddress_workernode01_floating) $(shell cd terraform && terraform output -raw ipaddress_workernode02_floating) $(shell cd terraform && terraform output -raw ipaddress_workernode03_floating)
 
 get_cluster_config: login_ibmcloud
 	ibmcloud oc cluster config --cluster $(RESOURCE_PREFIX)-cluster --admin

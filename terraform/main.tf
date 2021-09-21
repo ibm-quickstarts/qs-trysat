@@ -412,7 +412,7 @@ module "on_prem_instance" {
   zone                 = "${var.IAAS_REGION}-2"
   ssh_private_key_file = "../ssh-keys/ssh-key"
   bastion_host         = module.wireguard.vsi_floating_ip
-}  
+}
 
 resource "null_resource" "setup_make" {
   provisioner "local-exec" {
