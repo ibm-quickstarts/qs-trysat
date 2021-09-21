@@ -428,9 +428,6 @@ resource "null_resource" "make_public_location_and_cluster" {
   depends_on = [
     ibm_is_subnet.subnet-1,
     ibm_is_subnet.subnet-2,
-    ibm_is_subnet.subnet-3,
-    ibm_is_public_gateway.public-gateway-1,
-    ibm_is_public_gateway.public-gateway-2,
-    ibm_is_public_gateway.public-gateway-3,
+    ibm_is_subnet.subnet-3
   ]
 }
