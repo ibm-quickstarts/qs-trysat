@@ -414,9 +414,9 @@ module "on_prem_instance" {
   bastion_host         = module.wireguard.vsi_floating_ip
 }  
 
-resource "null_resource" "make_public_location_and_cluster" {
+resource "null_resource" "setup_public_hosts" {
   provisioner "local-exec" {
-    command = "mv Makefile-schematics Makefile && ./scripts/install-make.sh && ./make setup_public_hosts"
+    command = "mv schematics-Makefile Makefile && ./scripts/install-make.sh && ./make setup_public_hosts"
     environment = {
       TF_VAR_RESOURCE_PREFIX  = var.RESOURCE_PREFIX
       IC_API_KEY              = var.IC_API_KEY
@@ -431,3 +431,4 @@ resource "null_resource" "make_public_location_and_cluster" {
     ibm_is_subnet.subnet-3
   ]
 }
+
