@@ -177,6 +177,9 @@ setup_public_hosts: login_ibmcloud
 
 all_public_cluster: login_ibmcloud
 	make create_cluster
+	make setup_public_cluster
+
+setup_public_cluster:
 	make cluster_in_warning
 	make assign_workernodes
 	make cluster_in_normal
@@ -189,5 +192,4 @@ all_public:
 	@echo "Done!"
 
 setup_terraform_env:
-	# install ibmcloud tool
 	# make install
