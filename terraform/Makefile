@@ -35,16 +35,14 @@ install_oc_cli:
 	mv oc /usr/local/bin/oc
 	oc version
 
-
-
 watch:
 	./watch_ibmcloud
 
 terraform_init:
 ifeq (, $(shell which tfswitch))
-	(terraform init -upgrade)
+	(cd terraform && terraform init -upgrade)
 else
-	(tfswitch && terraform init -upgrade)
+	(cd terraform && tfswitch && terraform init -upgrade)
 endif
 
 clean: terraform_init ssh-keys/ssh-key login_ibmcloud
@@ -52,7 +50,7 @@ clean: terraform_init ssh-keys/ssh-key login_ibmcloud
 	@sleep 5
 	rm -fv wireguard-$(RESOURCE_PREFIX).conf
 	while ibmcloud oc cluster get --cluster $(RESOURCE_PREFIX)-cluster 2>/dev/null >/dev/null; do ibmcloud oc cluster rm -f --cluster $(RESOURCE_PREFIX)-cluster; echo 'Waiting for cluster to be deleted...'; sleep 30; done
-	-terraform destroy -auto-approve && rm -fv terraform.tfstate*
+	-cd terraform && terraform destroy -auto-approve && rm -fv terraform.tfstate*
 	rm -fv ssh-keys/ssh-key
 	rm -fv ssh-keys/ssh-key.pub
 
@@ -67,18 +65,18 @@ login_ibmcloud_silent:
 	make login_ibmcloud 2>&1 >/dev/null
 
 target: terraform_init login_ibmcloud
-	(terraform apply -target=ibm_resource_group.group -auto-approve)
+	(cd terraform && terraform apply -target=ibm_resource_group.group -auto-approve)
 	ibmcloud target -g $(RESOURCE_PREFIX)-group -r $(LOCATION_REGION)
 
 apply_terraform: terraform_init ssh-keys/ssh-key
-	(terraform apply -auto-approve)
+	(cd terraform && terraform apply -auto-approve)
 
 attach_host_ready:
 	until [ $$(ibmcloud sat host ls --location $(RESOURCE_PREFIX)-location | grep Ready | grep unassigned | wc -l) -gt 5 ]; do echo 'Waiting for 6 hosts to be attached...'; sleep 30; make login_ibmcloud_silent; done
 
 setup_dns_controlplane:
 	# For more information, see http://ibm.biz/satloc-ts-subdomain
-	scripts/dns-register.sh $(RESOURCE_PREFIX)-location $(shell terraform output -raw ipaddress_controlplane01_floating) $(shell terraform output -raw ipaddress_controlplane02_floating) $(shell terraform output -raw ipaddress_controlplane03_floating)
+	scripts/dns-register.sh $(RESOURCE_PREFIX)-location $(shell cd terraform && terraform output -raw ipaddress_controlplane01_floating) $(shell cd terraform && terraform output -raw ipaddress_controlplane02_floating) $(shell cd terraform && terraform output -raw ipaddress_controlplane03_floating)
 
 assign_controlplane:
 	until ibmcloud sat host assign --location $(RESOURCE_PREFIX)-location --zone=location-zone-1 --host=$(RESOURCE_PREFIX)-controlplane01; do echo 'Waiting to assign host to control plane'; sleep 30; done
@@ -110,7 +108,7 @@ login_cluster: get_cluster_config
 
 setup_network_cluster:
 	scripts/nlb-dns-remove.sh $(RESOURCE_PREFIX)-cluster
-	scripts/nlb-dns-add.sh $(RESOURCE_PREFIX)-cluster $(shell terraform output -raw ipaddress_workernode01_floating) $(shell terraform output -raw ipaddress_workernode02_floating) $(shell terraform output -raw ipaddress_workernode03_floating)
+	scripts/nlb-dns-add.sh $(RESOURCE_PREFIX)-cluster $(shell cd terraform && terraform output -raw ipaddress_workernode01_floating) $(shell cd terraform && terraform output -raw ipaddress_workernode02_floating) $(shell cd terraform && terraform output -raw ipaddress_workernode03_floating)
 
 get_cluster_config: login_ibmcloud
 	ibmcloud oc cluster config --cluster $(RESOURCE_PREFIX)-cluster --admin
@@ -119,12 +117,12 @@ configure_cluster_logdna: get_cluster_config
 	oc adm new-project --node-selector='' ibm-observe
 	oc create serviceaccount logdna-agent -n ibm-observe
 	oc adm policy add-scc-to-user privileged system:serviceaccount:ibm-observe:logdna-agent
-	oc create secret generic logdna-agent-key --from-literal=logdna-agent-key=$(shell terraform output -raw logdna_ingestion_key) -n ibm-observe
+	oc create secret generic logdna-agent-key --from-literal=logdna-agent-key=$(shell cd terraform && terraform output -raw logdna_ingestion_key) -n ibm-observe
 	oc create -f https://assets.us-east.logging.cloud.ibm.com/clients/logdna-agent-ds-os.yaml -n ibm-observe
 
 wireguard-$(RESOURCE_PREFIX).conf: ssh-keys/ssh-key
 	# There is no point in having strict host key checking, as floating IPs may get reused and we'll only connect to this server once.
-	scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ssh-keys/ssh-key root@$(shell terraform output -raw ipaddress_wireguard_floating):wireguard.client wireguard-$(RESOURCE_PREFIX).conf
+	scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i ssh-keys/ssh-key root@$(shell cd terraform && terraform output -raw ipaddress_wireguard_floating):wireguard.client wireguard-$(RESOURCE_PREFIX).conf
 
 get_wireguard_config: wireguard-$(RESOURCE_PREFIX).conf
 
@@ -137,7 +135,7 @@ deploy_sample_app: get_cluster_config
 
 create_sat_link_endpoint: login_ibmcloud
 	$(eval SAT_ID=$(shell ibmcloud sat location get --location $(RESOURCE_PREFIX)-location | grep ID | sed -E 's/ID:\s*//'))
-	ibmcloud sat endpoint create --dest-hostname $(shell terraform output -raw ipaddress_onprem_private) --dest-port 80 --dest-type location --location $(SAT_ID) --name Hello-On-Prem-HTTP --source-protocol HTTP
+	ibmcloud sat endpoint create --dest-hostname $(shell cd terraform && terraform output -raw ipaddress_onprem_private) --dest-port 80 --dest-type location --location $(SAT_ID) --name Hello-On-Prem-HTTP --source-protocol HTTP
 	until ibmcloud sat endpoint ls --location $(SAT_ID) | grep Hello-On-Prem-HTTP ; do echo 'Waiting to satellite link endpoint...'; sleep 30; done
 	make print_sat_link_hostname
 

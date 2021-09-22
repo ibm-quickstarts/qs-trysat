@@ -51,6 +51,10 @@ resource "ibm_satellite_location" "location" {
     bucket = ibm_cos_bucket.location_cos_bucket.bucket_name
     region = var.COS_REGION
   }
+
+  timeouts {
+    create = "60m"
+  }
 }
 
 data "ibm_satellite_attach_host_script" "script" {
