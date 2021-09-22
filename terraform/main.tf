@@ -446,7 +446,11 @@ resource "ibm_satellite_cluster" "create_cluster" {
   enable_config_admin    = true
   kube_version           = "4.6_openshift"
   resource_group_id      = ibm_resource_group.group.id
-  wait_for_worker_update = false
+  wait_for_worker_update = true
+
+  depends_on = [
+    null_resource.setup_public_hosts
+  ]
 }
 
 # resource "null_resource" "setup_cluster" {
