@@ -449,23 +449,24 @@ resource "ibm_satellite_cluster" "create_cluster" {
   wait_for_worker_update = true
 
   depends_on = [
-    null_resource.setup_public_hosts
+    null_resource.setup_public_hosts,
+    ibm_satellite_location.location
   ]
 }
 
-# resource "null_resource" "setup_cluster" {
-#   provisioner "local-exec" {
-#     command = "export PATH=$(pwd)/bin:$PATH && make setup_public_cluster"
-#     environment = {
-#       TF_VAR_RESOURCE_PREFIX  = var.RESOURCE_PREFIX
-#       IC_API_KEY              = var.IC_API_KEY
-#       COS_REGION              = var.COS_REGION
-#       LOCATION_REGION         = var.LOCATION_REGION
-#       IAAS_REGION             = var.IAAS_REGION
-#     }
-#   }
-#   depends_on = [
-#     ibm_satellite_cluster.create_cluster
-#   ]
-# }
+resource "null_resource" "setup_cluster" {
+  provisioner "local-exec" {
+    command = "export PATH=$(pwd)/bin:$PATH && make setup_public_cluster"
+    environment = {
+      RESOURCE_PREFIX  = var.RESOURCE_PREFIX
+      IC_API_KEY              = var.IC_API_KEY
+      COS_REGION              = var.COS_REGION
+      LOCATION_REGION         = var.LOCATION_REGION
+      IAAS_REGION             = var.IAAS_REGION
+    }
+  }
+  depends_on = [
+    ibm_satellite_cluster.create_cluster
+  ]
+}
 
