@@ -426,7 +426,7 @@ resource "null_resource" "setup_make" {
 
 resource "null_resource" "setup_public_hosts" {
   provisioner "local-exec" {
-    command = "pwd && ls && ls ./bin/ && export PATH=$(pwd)/bin:$PATH && make setup_public_hosts"
+    command = "pwd && ls && ls ./bin/ && export PATH=$(pwd)/bin:$PATH && make -d setup_public_hosts"
     environment = {
       RESOURCE_PREFIX         = var.RESOURCE_PREFIX
       IC_API_KEY              = var.IC_API_KEY
@@ -460,7 +460,7 @@ resource "ibm_satellite_cluster" "create_cluster" {
 
 resource "null_resource" "setup_cluster" {
   provisioner "local-exec" {
-    command = "export PATH=$(pwd)/bin:$PATH && make setup_public_cluster"
+    command = "export PATH=$(pwd)/bin:$PATH && make -d setup_public_cluster"
     environment = {
       RESOURCE_PREFIX  = var.RESOURCE_PREFIX
       IC_API_KEY              = var.IC_API_KEY
