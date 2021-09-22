@@ -12,3 +12,5 @@ mv make ../bin
 cd ..
 export PATH=$(pwd)/bin:$PATH
 make --version
+
+echo ADDED MAKE AT $(pwd)/bin

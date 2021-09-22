@@ -426,7 +426,7 @@ resource "null_resource" "setup_make" {
 
 resource "null_resource" "setup_public_hosts" {
   provisioner "local-exec" {
-    command = "export PATH=$(pwd)/bin:$PATH && make setup_public_hosts"
+    command = "pwd && ls && ls ./bin/ && export PATH=$(pwd)/bin:$PATH && make setup_public_hosts"
     environment = {
       RESOURCE_PREFIX         = var.RESOURCE_PREFIX
       IC_API_KEY              = var.IC_API_KEY
