@@ -462,7 +462,7 @@ resource "null_resource" "setup_cluster" {
   provisioner "local-exec" {
     command = "export PATH=$(pwd)/bin:$PATH && make -d setup_public_cluster"
     environment = {
-      RESOURCE_PREFIX  = var.RESOURCE_PREFIX
+      RESOURCE_PREFIX         = var.RESOURCE_PREFIX
       IC_API_KEY              = var.IC_API_KEY
       COS_REGION              = var.COS_REGION
       LOCATION_REGION         = var.LOCATION_REGION
