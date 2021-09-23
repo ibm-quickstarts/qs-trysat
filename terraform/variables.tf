@@ -3,7 +3,6 @@
 
 variable "RESOURCE_PREFIX" {
   type = string
-  default = "try-sat"
 }
 
 variable "LOCATION_REGION" {
