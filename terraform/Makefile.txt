@@ -79,6 +79,7 @@ attach_host_ready:
 setup_dns_controlplane:
 	# For more information, see http://ibm.biz/satloc-ts-subdomain
 	pwd && ls
+	terraform --version
 	scripts/dns-register.sh $(RESOURCE_PREFIX)-location $(shell terraform output -raw ipaddress_controlplane01_floating) $(shell terraform output -raw ipaddress_controlplane02_floating) $(shell terraform output -raw ipaddress_controlplane03_floating)
 
 assign_controlplane:
