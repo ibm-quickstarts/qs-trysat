@@ -26,32 +26,16 @@ See the [disclaimers](DISCLAIMERS.md) for more.
 ## How to Use
 
 *   Clone this repository locally.
-*   Copy `.envrc-template` to `.envrc` (at the root of this repo), then follow the instructions in `.envrc` to edit it and set `try-sat` configuration.
-*   Run `source .envrc` before you continue (you will need to re-run this in each terminal you open whenever you run `try-sat` commands; you can use [direnv](PREREQS.md) to automate this).
+*   Copy `.envrc-template` to `.envrc` (at the root of this repo), then follow the instructions in `.envrc` to edit it and set `try-sat` configuration in particular, RESOURCE_PREFIX (ie try-sat-test-# which will prefix all resources that are created) and IC_API_KEY (with an ibm cloud api key).
+*   Use [this link](https://cloud.ibm.com/schematics/workspaces/create?terraform_version=terraform_v1.0&repository=https://github.com/ibm-quickstarts/qs-trysat/tree/master/terraform) to create a workspace in IBM Schematics. Add the same values for IC_API_KEY (make sure you select the sensitive box to keep your credentials from being exposed in the logs) and RESOURCE_PREFIX that you used in the step above under the settings tab (and any other values that you changed in the `.envrc`).
+*   Apply the schematics plan in the UI.
+*   Once the job has completed we can run the followup tasks from the terminal
+*   From the repo directory, run `source .envrc` (you will need to re-run this in each terminal you open whenever you run `try-sat` commands; you can use [direnv](PREREQS.md) to automate this).
 *   Install the [pre-requisite tools](PREREQS.md). You may already have many of these.
 *   Complete one of the methods listed below.
-
-### Method 1: 'One-click' Private ROKS cluster on private endpoints, with WireGuard VPN
-
-> Estimated time: 90mins
-
-1.  Run `make all_private`, or `make all_private_location` to just create the location without the ROKS cluster (this can be added later by running `make all_private_cluster`).
-
-2.  If you create the location, and you want to add LogDNA log forwarding from your cluster, you must first [activate the WireGuard VPN](#using-your-generated-cluster), then running `make configure_cluster_logdna`.
-
-### Method 2: 'One-click' Public ROKS cluster on public endpoints, with WireGuard VPN in addition
-
-> Estimated time: 90mins
-
-Run `make all_public`, or `make all_public_location` to just create the location without the ROKS cluster (this can be added later by running `make all_public_cluster`).
-
-### Method 3: Hands-on Step-by-step
-
-**For now this method is deprecated, but if you wish you can likely figure this out from the `all_private` or `all_public` targets in the [Makefile](Makefile).**
+*   Run `make all_public_cluster` to create the satellite cluster and configure the hosts.
 
 ## What Next? / Using Your Generated Cluster
-
-*   If you are using Method 1 (private endpoints), open the WireGuard client and import the generated WireGuard configuration file from the root of the checkout directory (`wireguard-$(RESOURCE_PREFIX).conf`). Activate the VPN.
 
 *   Run `make login_cluster`. You should then be able to run `oc` commands and work with your new cluster from the command line using `kubectl`/`oc`.  Or... open the OpenShift console through the IBM Cloud console.
 
