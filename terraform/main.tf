@@ -376,18 +376,18 @@ module "is_instance_workernode03" {
   node_password             = random_password.nodepwd.result
 }
 
-module "wireguard" {
-  source = "./modules/vsi-ubuntu-wireguard"
+# module "wireguard" {
+#   source = "./modules/vsi-ubuntu-wireguard"
 
-  zone                 = "${var.IAAS_REGION}-1"
-  basename             = var.RESOURCE_PREFIX
-  region               = var.IAAS_REGION
-  resource_group       = ibm_resource_group.group.id
-  vpc_id               = ibm_is_vpc.vpc.id
-  ssh_key_id           = ibm_is_ssh_key.ssh-key.id
-  ssh_private_key_file = "../ssh-keys/ssh-key"
-  cidrs                = ["${module.is_instance_controlplane01.private_ip}/32", "${module.is_instance_controlplane02.private_ip}/32", "${module.is_instance_controlplane03.private_ip}/32", "${module.is_instance_workernode01.private_ip}/32", "${module.is_instance_workernode02.private_ip}/32", "${module.is_instance_workernode03.private_ip}/32"]
-}
+#   zone                 = "${var.IAAS_REGION}-1"
+#   basename             = var.RESOURCE_PREFIX
+#   region               = var.IAAS_REGION
+#   resource_group       = ibm_resource_group.group.id
+#   vpc_id               = ibm_is_vpc.vpc.id
+#   ssh_key_id           = ibm_is_ssh_key.ssh-key.id
+#   ssh_private_key_file = "../ssh-keys/ssh-key"
+#   cidrs                = ["${module.is_instance_controlplane01.private_ip}/32", "${module.is_instance_controlplane02.private_ip}/32", "${module.is_instance_controlplane03.private_ip}/32", "${module.is_instance_workernode01.private_ip}/32", "${module.is_instance_workernode02.private_ip}/32", "${module.is_instance_workernode03.private_ip}/32"]
+# }
 
 resource "ibm_resource_instance" "logdna" {
   name     = "${var.RESOURCE_PREFIX}-logdna"
