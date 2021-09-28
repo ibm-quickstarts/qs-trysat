@@ -457,7 +457,12 @@ resource "null_resource" "setup_public_hosts" {
     ibm_is_public_gateway.public-gateway-2,
     ibm_is_public_gateway.public-gateway-3,
     null_resource.setup_make,
-    module.is_instance_workernode03
+    module.is_instance_workernode01,
+    module.is_instance_workernode02,
+    module.is_instance_workernode03,
+    module.is_instance_controlplane01,
+    module.is_instance_controlplane02,
+    module.is_instance_controlplane03
   ]
 }
 
