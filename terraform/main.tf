@@ -465,34 +465,3 @@ resource "null_resource" "setup_public_hosts" {
     module.is_instance_controlplane03
   ]
 }
-
-resource "ibm_satellite_cluster" "create_cluster" {
-  name                   = "${var.RESOURCE_PREFIX}-cluster"
-  location               = "${var.RESOURCE_PREFIX}-location"
-  enable_config_admin    = true
-  kube_version           = "4.6_openshift"
-  resource_group_id      = ibm_resource_group.group.id
-  wait_for_worker_update = true
-
-  depends_on = [
-    null_resource.setup_public_hosts,
-    ibm_satellite_location.location
-  ]
-}
-
-resource "null_resource" "setup_cluster" {
-  provisioner "local-exec" {
-    command = "export PATH=$(pwd)/bin:$PATH && make -d setup_public_cluster"
-    environment = {
-      RESOURCE_PREFIX         = var.RESOURCE_PREFIX
-      IC_API_KEY              = var.IC_API_KEY
-      COS_REGION              = var.COS_REGION
-      LOCATION_REGION         = var.LOCATION_REGION
-      IAAS_REGION             = var.IAAS_REGION
-    }
-  }
-  depends_on = [
-    ibm_satellite_cluster.create_cluster
-  ]
-}
-

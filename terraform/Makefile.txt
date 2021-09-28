@@ -178,10 +178,13 @@ setup_public_hosts: login_ibmcloud
 	make attach_host_ready
 	make assign_controlplane
 	make assign_controlplane_ready
-	make setup_dns_controlplane
 
 all_public_cluster: login_ibmcloud
 	make create_cluster
+	make setup_public_cluster
+
+configure_dns_and_cluster:
+	make setup_dns_controlplane
 	make setup_public_cluster
 
 setup_public_cluster:
