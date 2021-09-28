@@ -112,6 +112,9 @@ login_cluster: get_cluster_config
 
 setup_network_cluster:
 	scripts/nlb-dns-remove.sh $(RESOURCE_PREFIX)-cluster
+	terraform1.0 output -raw ipaddress_workernode01_floating
+	terraform1.0 output -raw ipaddress_workernode02_floating
+	terraform1.0 output -raw ipaddress_workernode03_floating
 	scripts/nlb-dns-add.sh $(RESOURCE_PREFIX)-cluster $(shell terraform1.0 output -raw ipaddress_workernode01_floating) $(shell terraform1.0 output -raw ipaddress_workernode02_floating) $(shell terraform1.0 output -raw ipaddress_workernode03_floating)
 
 get_cluster_config: login_ibmcloud
