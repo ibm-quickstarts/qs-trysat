@@ -436,11 +436,28 @@ resource "null_resource" "setup_public_hosts" {
     }
   }
   depends_on = [
+    ibm_resource_instance.location_cos_instance,
+    ibm_cos_bucket.location_cos_bucket,
+    ibm_satellite_location.location,
+    data.local_file.ssh_public_key,
+    ibm_is_vpc.vpc,
     ibm_is_subnet.subnet-1,
     ibm_is_subnet.subnet-2,
     ibm_is_subnet.subnet-3,
-    ibm_satellite_location.location,
-    null_resource.setup_make
+    ibm_is_security_group_rule.sg-rule-inbound-ssh,
+    ibm_is_security_group_rule.sg-rule-inbound-http,
+    ibm_is_security_group_rule.sg-rule-inbound-https,
+    ibm_is_security_group_rule.sg-rule-inbound-api,
+    ibm_is_security_group_rule.sg-rule-inbound-api2,
+    ibm_is_security_group_rule.sg-rule-inbound-icmp,
+    ibm_is_security_group_rule.sg-rule-outbound,
+    ibm_is_security_group_rule.sg-rule-inbound-from-the-group,
+    ibm_is_security_group_rule.sg-rule-outbound-to-the-group,
+    ibm_is_public_gateway.public-gateway-1,
+    ibm_is_public_gateway.public-gateway-2,
+    ibm_is_public_gateway.public-gateway-3,
+    null_resource.setup_make,
+    is_instance_workernode03
   ]
 }
 
