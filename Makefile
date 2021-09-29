@@ -188,6 +188,8 @@ all_public:
 	make all_public_cluster
 	@echo "Done!"
 
-setup_terraform_env:
+schematics_complete_configuration:
 	# install ibmcloud tool
-	# make install
+	make ssh-keys/ssh-key
+	make setup_public_hosts
+	make all_public_cluster
