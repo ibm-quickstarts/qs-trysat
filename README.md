@@ -80,26 +80,3 @@ Run `make clean`. ❗ If you are going to re-run `try-sat` again, it's *strongly
 *   If you want to log into one of your control plane nodes/worker nodes, `try-sat` creates a backdoor using SSH. After you've run `try-sat`, you can run `make ssh_bastion`, which should print out a password, print out the IPs of the various hosts created, and then automatically login you to the bastion host (aka, the Wireguard server). From there, you can connect to any of the internal IPs using `ssh user@<ipaddress>`, entering the same password which has been printed out.
 
 *   If you want to record all the terminal output of `try-sat`, you might find [script](https://en.wikipedia.org/wiki/Script_\(Unix\)) helpful.
-
-## Contacts
-
-If you want to discuss try-sat, try the [try-sat-friends](https://ibm-garage.slack.com/archives/C01PCPAB9HS) Slack channel.
-If you're thinking about using it for anything important, please read the [disclaimers and limitations](DISCLAIMERS.md)! Also, there are some [known issues](https://github.ibm.com/garage-satellite-guild/try-sat/issues?q=is%3Aissue+is%3Aopen+label%3Abug).
-
-## Thanks
-
-*   Jake Kitchener's walkthrough videos [1](https://ibm.ent.box.com/s/c2p4bi1mxfo3xf5s8mi3u6fagz2f87mm), [2](https://ibm.ent.box.com/s/l5cebiychfcm72hbthrv6cpxetevhmbc) were very helpful in putting this together, although we've taken a slightly different approach here in places.
-
-*   John Pape for a lot of help on Slack.
-
-*   Ilene Seeleman and the Security Guild for [Terraform-izing WireGuard](https://github.ibm.com/ibm-garage-for-cloud/guild-automation-scripts).
-
-*   Chris Weber for the new project name!
-
-*   Frederic Lavigne for doing some testing and sending a pull request with lots of improvements.
-
-*   Raimond van Stijn for fixing the region issue so any region can be used.
-
-*   Lionel Mace for some detailed feedback on UX of `try-sat`.
-
-*   Horst Josef Grenz Meza for some feedback on `try-sat`.
