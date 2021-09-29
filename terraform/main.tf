@@ -418,50 +418,50 @@ module "on_prem_instance" {
   bastion_host         = module.wireguard.vsi_floating_ip
 }
 
-resource "null_resource" "setup_make" {
-  provisioner "local-exec" {
-    command = "mv Makefile.txt Makefile && ./scripts/install-make.sh"
-  }
-}
+# resource "null_resource" "setup_make" {
+#   provisioner "local-exec" {
+#     command = "mv Makefile.txt Makefile && ./scripts/install-make.sh"
+#   }
+# }
 
-resource "null_resource" "setup_public_hosts" {
-  provisioner "local-exec" {
-    command = "pwd && ls && ls ./bin/ && export PATH=$(pwd)/bin:$PATH && make -d setup_public_hosts"
-    environment = {
-      RESOURCE_PREFIX         = var.RESOURCE_PREFIX
-      IC_API_KEY              = var.IC_API_KEY
-      COS_REGION              = var.COS_REGION
-      LOCATION_REGION         = var.LOCATION_REGION
-      IAAS_REGION             = var.IAAS_REGION
-    }
-  }
-  depends_on = [
-    ibm_resource_instance.location_cos_instance,
-    ibm_cos_bucket.location_cos_bucket,
-    ibm_satellite_location.location,
-    data.local_file.ssh_public_key,
-    ibm_is_vpc.vpc,
-    ibm_is_subnet.subnet-1,
-    ibm_is_subnet.subnet-2,
-    ibm_is_subnet.subnet-3,
-    ibm_is_security_group_rule.sg-rule-inbound-ssh,
-    ibm_is_security_group_rule.sg-rule-inbound-http,
-    ibm_is_security_group_rule.sg-rule-inbound-https,
-    ibm_is_security_group_rule.sg-rule-inbound-api,
-    ibm_is_security_group_rule.sg-rule-inbound-api2,
-    ibm_is_security_group_rule.sg-rule-inbound-icmp,
-    ibm_is_security_group_rule.sg-rule-outbound,
-    ibm_is_security_group_rule.sg-rule-inbound-from-the-group,
-    ibm_is_security_group_rule.sg-rule-outbound-to-the-group,
-    ibm_is_public_gateway.public-gateway-1,
-    ibm_is_public_gateway.public-gateway-2,
-    ibm_is_public_gateway.public-gateway-3,
-    null_resource.setup_make,
-    module.is_instance_workernode01,
-    module.is_instance_workernode02,
-    module.is_instance_workernode03,
-    module.is_instance_controlplane01,
-    module.is_instance_controlplane02,
-    module.is_instance_controlplane03
-  ]
-}
+# resource "null_resource" "setup_public_hosts" {
+#   provisioner "local-exec" {
+#     command = "pwd && ls && ls ./bin/ && export PATH=$(pwd)/bin:$PATH && make -d setup_public_hosts"
+#     environment = {
+#       RESOURCE_PREFIX         = var.RESOURCE_PREFIX
+#       IC_API_KEY              = var.IC_API_KEY
+#       COS_REGION              = var.COS_REGION
+#       LOCATION_REGION         = var.LOCATION_REGION
+#       IAAS_REGION             = var.IAAS_REGION
+#     }
+#   }
+#   depends_on = [
+#     ibm_resource_instance.location_cos_instance,
+#     ibm_cos_bucket.location_cos_bucket,
+#     ibm_satellite_location.location,
+#     data.local_file.ssh_public_key,
+#     ibm_is_vpc.vpc,
+#     ibm_is_subnet.subnet-1,
+#     ibm_is_subnet.subnet-2,
+#     ibm_is_subnet.subnet-3,
+#     ibm_is_security_group_rule.sg-rule-inbound-ssh,
+#     ibm_is_security_group_rule.sg-rule-inbound-http,
+#     ibm_is_security_group_rule.sg-rule-inbound-https,
+#     ibm_is_security_group_rule.sg-rule-inbound-api,
+#     ibm_is_security_group_rule.sg-rule-inbound-api2,
+#     ibm_is_security_group_rule.sg-rule-inbound-icmp,
+#     ibm_is_security_group_rule.sg-rule-outbound,
+#     ibm_is_security_group_rule.sg-rule-inbound-from-the-group,
+#     ibm_is_security_group_rule.sg-rule-outbound-to-the-group,
+#     ibm_is_public_gateway.public-gateway-1,
+#     ibm_is_public_gateway.public-gateway-2,
+#     ibm_is_public_gateway.public-gateway-3,
+#     null_resource.setup_make,
+#     module.is_instance_workernode01,
+#     module.is_instance_workernode02,
+#     module.is_instance_workernode03,
+#     module.is_instance_controlplane01,
+#     module.is_instance_controlplane02,
+#     module.is_instance_controlplane03
+#   ]
+# }
